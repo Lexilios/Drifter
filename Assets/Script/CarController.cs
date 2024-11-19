@@ -24,8 +24,6 @@ public class CarController : MonoBehaviour
     void Start()
     {
 
-
-     
         rb = this.GetComponent<Rigidbody>();
 
     }
