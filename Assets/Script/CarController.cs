@@ -12,9 +12,6 @@ public class KartController : MonoBehaviour
     public Transform kartNormal;
     public Rigidbody sphere;
 
-    public List<ParticleSystem> primaryParticles = new List<ParticleSystem>();
-    public List<ParticleSystem> secondaryParticles = new List<ParticleSystem>();
-
     float speed, currentSpeed;
     float rotate, currentRotate;
     int driftDirection;
@@ -33,14 +30,6 @@ public class KartController : MonoBehaviour
     public float gravity = 10f;
     public LayerMask layerMask;
 
-    [Header("Model Parts")]
-
-    public Transform frontWheels;
-    public Transform backWheels;
-    public Transform steeringWheel;
-
-
-    
 
     void Update()
     {
@@ -51,7 +40,7 @@ public class KartController : MonoBehaviour
         }
 
         //Follow Collider
-        transform.position = sphere.transform.position - new Vector3(0, 0.4f, 0);
+        //transform.position = sphere.transform.position - new Vector3(0, 0.4f, 0);
 
         //Accelerate
         if (Input.GetButton("Fire1"))
@@ -101,13 +90,13 @@ public class KartController : MonoBehaviour
             kartModel.parent.localRotation = Quaternion.Euler(0, Mathf.LerpAngle(kartModel.parent.localEulerAngles.y, (control * 15) * driftDirection, .2f), 0);
         }
 
-        //b) Wheels
+       /* //b) Wheels
         frontWheels.localEulerAngles = new Vector3(0, (Input.GetAxis("Horizontal") * 15), frontWheels.localEulerAngles.z);
         frontWheels.localEulerAngles += new Vector3(0, 0, sphere.velocity.magnitude / 2);
         backWheels.localEulerAngles += new Vector3(0, 0, sphere.velocity.magnitude / 2);
 
         //c) Steering Wheel
-        steeringWheel.localEulerAngles = new Vector3(-25, 90, ((Input.GetAxis("Horizontal") * 45)));
+        steeringWheel.localEulerAngles = new Vector3(-25, 90, ((Input.GetAxis("Horizontal") * 45)));*/
 
     }
 
@@ -115,9 +104,9 @@ public class KartController : MonoBehaviour
     {
         //Forward Acceleration
         if (!drifting)
-            sphere.AddForce(-kartModel.transform.right * currentSpeed, ForceMode.Acceleration);
+            sphere.AddForce(kartModel.transform.forward * currentSpeed, ForceMode.Acceleration);
         else
-            sphere.AddForce(transform.forward * currentSpeed, ForceMode.Acceleration);
+            sphere.AddForce(-kartModel.transform.right * currentSpeed, ForceMode.Acceleration);
 
         //Gravity
         sphere.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
