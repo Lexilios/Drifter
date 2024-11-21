@@ -12,13 +12,14 @@ public class KartController : MonoBehaviour
     public Transform kartNormal;
     public Rigidbody sphere;
 
-    float speed, currentSpeed;
+    [Header("Debugs")]
+    [SerializeField]float speed, currentSpeed;
     float rotate, currentRotate;
     int driftDirection;
-    float driftPower;
+    /*float driftPower;
     int driftMode = 0;
-    bool first, second, third;
-    Color c;
+    bool first, second, third;*/
+
 
     [Header("Bools")]
     public bool drifting;
@@ -29,10 +30,22 @@ public class KartController : MonoBehaviour
     public float steering = 80f;
     public float gravity = 10f;
     public LayerMask layerMask;
+    public float speedMultiplier = 12f;
+    public float rotateMultiplier = 4f;
 
 
     void Update()
     {
+        // Empeche la voiture de tourné sur elle même car currentSpeed n'atteint jamais 0
+
+        if (currentSpeed < 0.1)
+        {
+            currentSpeed = 0;
+        }
+
+
+
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             float time = Time.timeScale == 1 ? .2f : 1;
@@ -59,25 +72,29 @@ public class KartController : MonoBehaviour
         {
             drifting = true;
             driftDirection = Input.GetAxis("Horizontal") > 0 ? 1 : -1;
+            //Input.GetAxis("Horizontal") > 0 ? 1 : -1; [ -> avant ? = if (Input.GetAxis("Horizontal") > 0) { driftDirection = 1 }, : ->> else -1 ]
 
         }
 
         if (drifting)
         {
             float control = (driftDirection == 1) ? ExtensionMethods.Remap(Input.GetAxis("Horizontal"), -1, 1, 0, 2) : ExtensionMethods.Remap(Input.GetAxis("Horizontal"), -1, 1, 2, 0);
-            float powerControl = (driftDirection == 1) ? ExtensionMethods.Remap(Input.GetAxis("Horizontal"), -1, 1, .2f, 1) : ExtensionMethods.Remap(Input.GetAxis("Horizontal"), -1, 1, 1, .2f);
             Steer(driftDirection, control);
-            driftPower += powerControl;
 
+            //float powerControl = (driftDirection == 1) ? ExtensionMethods.Remap(Input.GetAxis("Horizontal"), -1, 1, .2f, 1) : ExtensionMethods.Remap(Input.GetAxis("Horizontal"), -1, 1, 1, .2f);
+            //driftPower += powerControl;
+
+            
         }
+
 
         if (Input.GetButtonUp("Jump") && drifting)
         {
             Boost();
         }
 
-        currentSpeed = Mathf.SmoothStep(currentSpeed, speed, Time.deltaTime * 12f); speed = 0f;
-        currentRotate = Mathf.Lerp(currentRotate, rotate, Time.deltaTime * 4f); rotate = 0f;
+        currentSpeed = Mathf.SmoothStep(currentSpeed, speed, Time.deltaTime * speedMultiplier); speed = 0f;
+        currentRotate = Mathf.Lerp(currentRotate, rotate, Time.deltaTime * rotateMultiplier); rotate = 0f;
 
         //a) Kart
         if (!drifting)
@@ -90,14 +107,7 @@ public class KartController : MonoBehaviour
             kartModel.parent.localRotation = Quaternion.Euler(0, Mathf.LerpAngle(kartModel.parent.localEulerAngles.y, (control * 15) * driftDirection, .2f), 0);
         }
 
-       /* //b) Wheels
-        frontWheels.localEulerAngles = new Vector3(0, (Input.GetAxis("Horizontal") * 15), frontWheels.localEulerAngles.z);
-        frontWheels.localEulerAngles += new Vector3(0, 0, sphere.velocity.magnitude / 2);
-        backWheels.localEulerAngles += new Vector3(0, 0, sphere.velocity.magnitude / 2);
-
-        //c) Steering Wheel
-        steeringWheel.localEulerAngles = new Vector3(-25, 90, ((Input.GetAxis("Horizontal") * 45)));*/
-
+       
     }
 
     private void FixedUpdate()
@@ -112,8 +122,10 @@ public class KartController : MonoBehaviour
         sphere.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
 
         //Steering
-        transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, new Vector3(0, transform.eulerAngles.y + currentRotate, 0), Time.deltaTime * 5f);
-
+        if (currentSpeed > 0) {
+            
+            transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, new Vector3(0, transform.eulerAngles.y + currentRotate, 0), Time.deltaTime * 5f);
+        }
         RaycastHit hitOn;
         RaycastHit hitNear;
 
@@ -127,18 +139,14 @@ public class KartController : MonoBehaviour
 
     public void Boost()
     {
+
         drifting = false;
+        // Ajout d'un boost de vitesse après le drift
     }
 
     public void Steer(int direction, float amount)
     {
         rotate = (steering * direction) * amount;
-    }
-
-
-    private void Speed(float x)
-    {
-        currentSpeed = x;
     }
 
 }
