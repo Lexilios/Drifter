@@ -45,18 +45,18 @@ public class KartController : MonoBehaviour
 
 
 
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        // bullet time 
+        /*if (Input.GetKeyDown(KeyCode.Space))
         {
-            float time = Time.timeScale == 1 ? .2f : 1;
+            float time = Time.timeScale == 1 ? .5f : 1;
             Time.timeScale = time;
-        }
+        }*/
 
         //Follow Collider
         //transform.position = sphere.transform.position - new Vector3(0, 0.4f, 0);
 
         //Accelerate
-        if (Input.GetButton("Fire1"))
+        if (Input.GetButton("Vertical"))
             speed = acceleration;
 
         //Steer
