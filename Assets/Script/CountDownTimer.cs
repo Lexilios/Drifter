@@ -7,8 +7,8 @@ using TMPro;
 public class CountdownTimer : MonoBehaviour
 {
     public float timeRemaining = 10; 
-    public Text countdownText; 
-    
+    public Text countdownText;
+    [SerializeField]PlayButtonScript countdownButtonScript;
 
     void Update()
     {
@@ -20,8 +20,7 @@ public class CountdownTimer : MonoBehaviour
         }
         else
         {
-            countdownText.text = "GO!";
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -1);
+            countdownButtonScript.LooseScreen();
         }
 
     

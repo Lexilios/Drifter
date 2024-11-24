@@ -7,13 +7,13 @@ using UnityEngine.Rendering.Universal;
 public class KartController : MonoBehaviour
 {
 
-
+    public PlayButtonScript PlayButtonScript;
     public Transform kartModel;
     public Transform kartNormal;
     public Rigidbody sphere;
 
     [Header("Debugs")]
-    [SerializeField]float speed, currentSpeed;
+    public float speed, currentSpeed;
     float rotate, currentRotate;
     int driftDirection;
     /*float driftPower;
@@ -42,9 +42,7 @@ public class KartController : MonoBehaviour
         {
             currentSpeed = 0;
         }
-
-
-
+          
         // bullet time 
         /*if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -135,6 +133,7 @@ public class KartController : MonoBehaviour
         //Normal Rotation
         kartNormal.up = Vector3.Lerp(kartNormal.up, hitNear.normal, Time.deltaTime * 8.0f);
         kartNormal.Rotate(0, transform.eulerAngles.y, 0);
+
     }
 
     public void Boost()
@@ -147,6 +146,15 @@ public class KartController : MonoBehaviour
     public void Steer(int direction, float amount)
     {
         rotate = (steering * direction) * amount;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Building")
+        {
+            PlayButtonScript.LooseScreen();
+        }
+        
     }
 
 }
